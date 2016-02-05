@@ -13,19 +13,19 @@ var BOWER_PATH = 'bower_components';
 
 bier.settings.dist_prefix = 'public/static/';
 
-bier(function (play) {
+bier(function (I) {
 
-    play.copy(BOWER_PATH + '/jquery/dist/*').to('jquery');
+    I.copy('bower_components/jquery/dist/*').to('jquery');
 
-    play.sass('style/publ/**/*.scss').to('publ');
-    play.sass(['style/admin/layout.scss', 'style/admin/login.scss']).to('admin/css');
+    I.sass('style/publ/**/*.scss').to('publ');
+    I.sass(['style/admin/layout.scss', 'style/admin/login.scss']).to('admin/css');
 
-    play.javascript([
+    I.javascript([
         'bower_components/bxslider-4/dist/jquery.bxslider.js',
         'bower_components/jquery.cookie/jquery.cookie.js',
         'script/main.js'
     ]).to('scripts').concat('main.js');
 
-    play.browserify(['script/admin/**/*.js']).to('admin/js');
+    I.browserify(['script/admin/**/*.js']).to('admin/js');
 });
 ```
