@@ -25,7 +25,7 @@ var enabled = {
 class Runner {
 
     constructor(src) {
-        this.src = src;
+        this.src = Bier.settings.source_prefix + src;
         this.dist = null;
         this.concat_name = null;
         if (this.execute === undefined) {
@@ -157,6 +157,7 @@ var Bier = function ($closure) {
 };
 
 Bier.settings = Bier.settings || {};
-Bier.settings.dist_prefix = '.';
+Bier.settings.dist_prefix = './';
+Bier.settings.source_prefix = './';
 
 module.exports = Bier;
