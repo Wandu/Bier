@@ -25,7 +25,12 @@ var enabled = {
 class Runner {
 
     constructor(src) {
-        this.src = Bier.settings.source_prefix + src;
+
+        if(!_.isArray(src)) src = [src];
+
+        this.src = _.map(src, (src)=>{
+            return Bier.settings.source_prefix + src;
+        });
         this.dist = null;
         this.concat_name = null;
         if (this.execute === undefined) {
