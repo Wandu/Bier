@@ -16,6 +16,7 @@ var minifyCss = require('gulp-minify-css');
 var concat = require('gulp-concat');
 var buffer = require('vinyl-buffer');
 var globby = require('globby');
+var gulpUtil = require('gulp-util');
 
 var enabled = {
     // Enable minify,uglify when `--production`
@@ -25,7 +26,12 @@ var enabled = {
 class Runner {
 
     constructor(src) {
-        this.src = Bier.settings.source_prefix + src;
+
+        if(!_.isArray(src)) src = [src];
+
+        this.src = _.map(src, (src)=>{
+            return Bier.settings.source_prefix + src;
+        });
         this.dist = null;
         this.concat_name = null;
         if (this.execute === undefined) {
@@ -43,8 +49,12 @@ class Runner {
         return this;
     }
 
-    shouldConcat() {
+    _shouldConcat() {
         return null !== this.concat_name;
+    }
+
+    _getConcatName() {
+        return (this._shouldConcat()) ? this.concat_name : 'all.js';
     }
 }
 
@@ -76,7 +86,10 @@ class JsRunner extends Runner {
     }
 
     execute() {
-        return gulp.src(this.src).pipe(gulpif(this.shouldConcat(), concat(this.concat_name))).pipe(gulp.dest(this.dist));
+        return gulp.src(this.src)
+            .pipe(gulpif(enabled.minifyUglify, uglify().on('error', gulpUtil.log)))
+            .pipe(gulpif(this._shouldConcat(), concat(this._getConcatName())))
+            .pipe(gulp.dest(this.dist));
     }
 
 }
@@ -88,9 +101,11 @@ class SassRunner extends Runner {
     }
 
     execute() {
-        return gulp.src(this.src).pipe(sass().on('error', sass.logError)).pipe(gulpif(enabled.minifyUglify, minifyCss({
-            compatibility: 'ie8'
-        }))).pipe(gulp.dest(this.dist));
+        return gulp.src(this.src).pipe(sass().on('error', sass.logError))
+            .pipe(gulpif(enabled.minifyUglify, minifyCss({
+                compatibility: 'ie8'
+            })))
+            .pipe(gulp.dest(this.dist));
     }
 
 }
