@@ -1,7 +1,11 @@
 Festiv Bier
 ===
 
+[![Latest Version](https://img.shields.io/npm/v/bier.svg)](http://npmjs.com/bier)
+[![Total Downloads](https://img.shields.io/npm/dt/bier.svg)](http://npmjs.com/bier)
+
 The Bier is gulp task runner framework.
+
 
 
 **Example**

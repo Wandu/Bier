@@ -12,7 +12,7 @@ var _ = require('lodash');
 var through = require('through2');
 var source = require('vinyl-source-stream');
 var gulpif = require('gulp-if');
-var minifyCss = require('gulp-minify-css');
+var cssnano = require('gulp-cssnano');
 var concat = require('gulp-concat');
 var buffer = require('vinyl-buffer');
 var globby = require('globby');
@@ -102,9 +102,7 @@ class SassRunner extends Runner {
 
     execute() {
         return gulp.src(this.src).pipe(sass().on('error', sass.logError))
-            .pipe(gulpif(enabled.minifyUglify, minifyCss({
-                compatibility: 'ie8'
-            })))
+            .pipe(gulpif(enabled.minifyUglify, cssnano()))
             .pipe(gulp.dest(this.dist));
     }
 
