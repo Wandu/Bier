@@ -4,7 +4,7 @@
   "description": "the bier is gulp task runner framework.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha test"
   },
   "repository": {
     "type": "git",
@@ -18,24 +18,27 @@
     "browserify": "^13.0.0",
     "event-stream": "^3.3.2",
     "glob": "^6.0.4",
+    "globby": "^4.0.0",
     "gulp": "^3.8.8",
     "gulp-concat": "^2.6.0",
     "gulp-cssnano": "^2.1.1",
+    "gulp-if": "^2.0.0",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.6.0",
+    "gulp-streamify": "^1.0.2",
     "gulp-uglify": "^1.4.2",
     "gulp-util": "^3.0.7",
+    "lodash": "^4",
     "merge-stream": "^1.0.0",
     "minimist": "^1.2.0",
     "through2": "^2.0.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "vinyl-transform": "^1.0.0",
-    "globby": "^4.0.0",
-    "gulp-if": "^2.0.0",
-    "gulp-streamify": "^1.0.2",
-    "lodash": "^3.10.1"
+    "vinyl-transform": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5"
   },
   "license": "MIT",
   "bugs": {

@@ -169,8 +169,9 @@ var Bier = function ($closure) {
     gulp.task('default', defaultTasks);
 };
 
-Bier.settings = Bier.settings || {};
-Bier.settings.dist_prefix = './';
-Bier.settings.source_prefix = './';
+Bier.settings = Bier.settings || {
+    "dist_prefix": './',
+    "source_prefix": './',
+};
 
 module.exports = Bier;
