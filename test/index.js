@@ -6,7 +6,7 @@ var fs = require('fs');
 
 process.chdir(__dirname);
 
-describe("Sass", function () {
+describe("Gulp Runner", function () {
 	it("gulp sass", function (done) {
 		rimraf('dist', function () {
 			exec('../node_modules/.bin/gulp sass', function (err) {
@@ -27,6 +27,19 @@ describe("Sass", function () {
 				assert.equal(
 					fs.readFileSync('expected/scss/index.css').toString(),
 					fs.readFileSync('dist/scss/index.css').toString()
+				);
+				done();
+			});
+		});
+	});
+
+	it("gulp less", function (done) {
+		rimraf('dist', function () {
+			exec('../node_modules/.bin/gulp less', function (err) {
+				if (err) done(err);
+				assert.equal(
+					fs.readFileSync('expected/less/index.css').toString(),
+					fs.readFileSync('dist/less/index.css').toString()
 				);
 				done();
 			});

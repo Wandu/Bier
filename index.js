@@ -8,6 +8,7 @@ var streamify = require('gulp-streamify');
 var browserify = require('browserify');
 var babelify = require('babelify');
 var sass = require('gulp-sass');
+var less = require('gulp-less');
 var _ = require('lodash');
 var through = require('through2');
 var source = require('vinyl-source-stream');
@@ -30,7 +31,7 @@ class Runner {
         if(!_.isArray(src)) src = [src];
 
         this.src = _.map(src, (src)=>{
-            return Bier.settings.source_prefix + src;
+            return Bier.config.source_prefix + src;
         });
         this.dist = null;
         this.concat_name = null;
@@ -40,7 +41,7 @@ class Runner {
     }
 
     to(dist) {
-        this.dist = Bier.settings.dist_prefix + dist;
+        this.dist = Bier.config.dist_prefix + dist;
         return this;
     }
 
@@ -108,6 +109,20 @@ class SassRunner extends Runner {
 
 }
 
+class LessRunner extends Runner {
+
+    constructor(src) {
+        super(src);
+    }
+
+    execute() {
+        return gulp.src(this.src).pipe(less().on('error', sass.logError))
+            .pipe(gulpif(enabled.minifyUglify, cssnano()))
+            .pipe(gulp.dest(this.dist));
+    }
+
+}
+
 class CopyRunner extends Runner {
 
     constructor(src) {
@@ -133,6 +148,12 @@ var Bier = function ($closure) {
             var runner = new SassRunner(src);
             all.scss = all.scss || [];
             all.scss.push(runner);
+            return runner;
+        },
+        less: function (src) {
+            var runner = new LessRunner(src);
+            all.less = all.less || [];
+            all.less.push(runner);
             return runner;
         },
         copy: function (src) {
@@ -175,7 +196,7 @@ var Bier = function ($closure) {
     gulp.task('default', defaultTasks);
 };
 
-Bier.settings = Bier.settings || {
+Bier.config = Bier.config || {
     "dist_prefix": './',
     "source_prefix": './',
 };

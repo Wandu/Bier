@@ -11,7 +11,7 @@ The Bier is gulp task runner framework.
 ```js
 var bier = require('bier');
 
-bier.settings.dist_prefix = 'public/static/';
+bier.config.dist_prefix = 'public/static/';
 
 bier(function (will) {
 
@@ -33,10 +33,13 @@ bier(function (will) {
 ## Support Tasks
 
 - copy
+
 - sass
 - scss (alias sass)
+- less
+
 - javascript
-- browserify
+- browserify : support **ecma script 2015**
 
 ## Run Test
 

@@ -1,8 +1,8 @@
 
 var Bier = require('../index.js'); // bier
 
-Bier.settings.dist_prefix = 'dist/';
-Bier.settings.source_prefix = 'assets/';
+Bier.config.dist_prefix = 'dist/';
+Bier.config.source_prefix = 'assets/';
 
 Bier(function (will) {
 	// run sass
@@ -10,4 +10,7 @@ Bier(function (will) {
 
 	// run scss
 	will.scss('scss/index.scss').to('scss');
+
+	// run less
+	will.less('less/index.less').to('less');
 });
