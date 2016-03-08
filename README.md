@@ -13,20 +13,20 @@ var bier = require('bier');
 
 bier.settings.dist_prefix = 'public/static/';
 
-bier(function (I) {
+bier(function (will) {
 
-    I.copy('bower_components/jquery/dist/*').to('jquery');
+    will.copy('bower_components/jquery/dist/*').to('jquery');
 
-    I.sass('style/publ/**/*.scss').to('publ');
-    I.sass(['style/admin/layout.scss', 'style/admin/login.scss']).to('admin/css');
+    will.sass('style/publ/**/*.scss').to('publ');
+    will.sass(['style/admin/layout.scss', 'style/admin/login.scss']).to('admin/css');
 
-    I.javascript([
+    will.javascript([
         'bower_components/bxslider-4/dist/jquery.bxslider.js',
         'bower_components/jquery.cookie/jquery.cookie.js',
         'script/main.js'
     ]).to('scripts').concat('main.js');
 
-    I.browserify(['script/admin/**/*.js']).to('admin/js');
+    will.browserify(['script/admin/**/*.js']).to('admin/js');
 });
 ```
 
@@ -36,3 +36,9 @@ bier(function (I) {
 - sass
 - javascript
 - browserify
+
+## Run Test
+
+```bash
+$ npm test
+```
