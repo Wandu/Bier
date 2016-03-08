@@ -34,6 +34,7 @@ bier(function (will) {
 
 - copy
 - sass
+- scss (alias sass)
 - javascript
 - browserify
 

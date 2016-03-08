@@ -19,6 +19,19 @@ describe("Sass", function () {
 			});
 		});
 	});
+
+	it("gulp scss (alias sass)", function (done) {
+		rimraf('dist', function () {
+			exec('../node_modules/.bin/gulp scss', function (err) {
+				if (err) done(err);
+				assert.equal(
+					fs.readFileSync('expected/scss/index.css').toString(),
+					fs.readFileSync('dist/scss/index.css').toString()
+				);
+				done();
+			});
+		});
+	});
 });
 
 describe("Dependency Searcher", function () {

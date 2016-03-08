@@ -129,6 +129,12 @@ var Bier = function ($closure) {
             all.sass.push(runner);
             return runner;
         },
+        scss: function (src) {
+            var runner = new SassRunner(src);
+            all.scss = all.scss || [];
+            all.scss.push(runner);
+            return runner;
+        },
         copy: function (src) {
             var runner = new CopyRunner(src);
             all.copy = all.copy || [];
