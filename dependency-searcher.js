@@ -7,9 +7,9 @@ function searchSass(sassFile) {
 
 	var reImport = /@import\s+[\"']([^\"']*)[\"'];?/;
 
-	// change components/hello -> components/_hello.sass
+	// change components/hello -> components/_hello.scss
 	function _changeImportNameToFileName(importName) {
-		var fileBaseName = '_' + path.basename(importName) + '.sass';
+		var fileBaseName = '_' + path.basename(importName) + '.scss';
 		return path.dirname(importName) + '/' + fileBaseName;
 	}
 
