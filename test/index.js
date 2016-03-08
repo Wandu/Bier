@@ -6,43 +6,64 @@ var fs = require('fs');
 
 process.chdir(__dirname);
 
+function runGulpCommand(command, callback) {
+	rimraf('dist', function () {
+		exec('../node_modules/.bin/gulp ' + command, callback);
+	});	
+}
+function assertEqualFile(output, expected) {
+	assert.equal(
+		fs.readFileSync(expected).toString(),
+		fs.readFileSync(output).toString()
+	);
+}
+
 describe("Gulp Runner", function () {
 	it("gulp sass", function (done) {
-		rimraf('dist', function () {
-			exec('../node_modules/.bin/gulp sass', function (err) {
-				if (err) done(err);
-				assert.equal(
-					fs.readFileSync('expected/sass/index.css').toString(),
-					fs.readFileSync('dist/sass/index.css').toString()
-				);
-				done();
-			});
+		runGulpCommand('sass', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/sass/index.css', 'expected/sass/index.css');
+			done();			
+		});
+	});
+
+	it("gulp sass --production", function (done) {
+		runGulpCommand('sass --production', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/sass/index.css', 'expected/sass/index.min.css');
+			done();			
 		});
 	});
 
 	it("gulp scss (alias sass)", function (done) {
-		rimraf('dist', function () {
-			exec('../node_modules/.bin/gulp scss', function (err) {
-				if (err) done(err);
-				assert.equal(
-					fs.readFileSync('expected/scss/index.css').toString(),
-					fs.readFileSync('dist/scss/index.css').toString()
-				);
-				done();
-			});
+		runGulpCommand('scss', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/scss/index.css', 'expected/scss/index.css');
+			done();			
+		});
+	});
+
+	it("gulp scss --production", function (done) {
+		runGulpCommand('scss --production', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/scss/index.css', 'expected/scss/index.min.css');
+			done();			
 		});
 	});
 
 	it("gulp less", function (done) {
-		rimraf('dist', function () {
-			exec('../node_modules/.bin/gulp less', function (err) {
-				if (err) done(err);
-				assert.equal(
-					fs.readFileSync('expected/less/index.css').toString(),
-					fs.readFileSync('dist/less/index.css').toString()
-				);
-				done();
-			});
+		runGulpCommand('less', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/less/index.css', 'expected/less/index.css');
+			done();			
+		});
+	});
+
+	it("gulp less --production", function (done) {
+		runGulpCommand('less --production', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/less/index.css', 'expected/less/index.min.css');
+			done();			
 		});
 	});
 });

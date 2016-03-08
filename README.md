@@ -8,6 +8,8 @@ The Bier is gulp task runner framework.
 
 **Example**
 
+open `gulpfile.js`, and write this.
+
 ```js
 var bier = require('bier');
 
@@ -20,6 +22,8 @@ bier(function (will) {
     will.sass('style/publ/**/*.scss').to('publ');
     will.sass(['style/admin/layout.scss', 'style/admin/login.scss']).to('admin/css');
 
+	will.less('less/index.less').to('less');
+
     will.javascript([
         'bower_components/bxslider-4/dist/jquery.bxslider.js',
         'bower_components/jquery.cookie/jquery.cookie.js',
@@ -29,6 +33,10 @@ bier(function (will) {
     will.browserify(['script/admin/**/*.js']).to('admin/js');
 });
 ```
+
+and, run command `gulp` in your sh.
+
+If you want minified output, just run `gulp --production`.
 
 ## Support Tasks
 
