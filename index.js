@@ -24,6 +24,17 @@ var enabled = {
     minifyUglify: argv.production
 };
 
+var config = {
+    dist_prefix: './',
+    source_prefix: './',
+    browserify: {
+        babelify: {
+            presets: ["es2015"],
+            plugins: [],
+        }
+    }
+};
+
 class Runner {
 
     constructor(src) {
@@ -66,16 +77,27 @@ class BrowserifyRunner extends Runner {
     }
 
     execute() {
-        return gulp.src(this.src).pipe(through.obj((file, encoding, callback) => {
-            browserify(BrowserifyRunner._getBrowserifyConfig(file.path)).bundle().pipe(source(file.relative)).pipe(gulp.dest(this.dist)).on('end', callback);
-        }));
+        return gulp.src(this.src)
+            .pipe(through.obj((file, encoding, callback) => {
+                browserify(BrowserifyRunner._getBrowserifyConfig(file.path))
+                    .bundle()
+                    .pipe(source(file.relative))
+                    .pipe(gulp.dest(this.dist))
+                    .on('end', callback);
+            }));
     }
 
     static _getBrowserifyConfig(entries) {
         return {
             entries: entries,
+
             //defining transforms here will avoid crashing your stream
-            transform: [babelify.configure({ presets: ["es2015"] })]
+            transform: [
+                babelify.configure({
+                    presets: config.browserify.babelify.presets,
+                    plugins: config.browserify.babelify.plugins,
+                })
+            ]
         };
     }
 }
@@ -92,7 +114,6 @@ class JsRunner extends Runner {
             .pipe(gulpif(this._shouldConcat(), concat(this._getConcatName())))
             .pipe(gulp.dest(this.dist));
     }
-
 }
 
 class SassRunner extends Runner {
@@ -135,9 +156,9 @@ class CopyRunner extends Runner {
 
 }
 
-var Bier = function ($closure) {
+var Bier = function (handler) {
     var all = {};
-    $closure.call(null, {
+    handler.call(null, {
         sass: function (src) {
             var runner = new SassRunner(src);
             all.sass = all.sass || [];
@@ -196,9 +217,6 @@ var Bier = function ($closure) {
     gulp.task('default', defaultTasks);
 };
 
-Bier.config = Bier.config || {
-    "dist_prefix": './',
-    "source_prefix": './',
-};
+Bier.config = Bier.config || config;
 
 module.exports = Bier;
