@@ -82,6 +82,8 @@ class BrowserifyRunner extends Runner {
                 browserify(BrowserifyRunner._getBrowserifyConfig(file.path))
                     .bundle()
                     .pipe(source(file.relative))
+                    .pipe(buffer())
+                    .pipe(gulpif(enabled.minifyUglify, uglify().on('error', gulpUtil.log)))
                     .pipe(gulp.dest(this.dist))
                     .on('end', callback);
             }));
