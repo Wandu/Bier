@@ -68,6 +68,15 @@ describe("Gulp Runner", function () {
 		});
 	});
 
+	it("gulp concat", function (done) {
+		runGulpCommand('concat', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/concat/all.js', 'expected/concat/all.js');
+			assertEqualFile('dist/concat/common.js', 'expected/concat/common.js');
+			done();
+		});
+	});
+	
 	it("gulp browserify", function (done) {
 		this.timeout(3000);
 		runGulpCommand('browserify', function (err) {

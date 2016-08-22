@@ -34,7 +34,13 @@ bier(function (will) {
         'bower_components/bxslider-4/dist/jquery.bxslider.js',
         'bower_components/jquery.cookie/jquery.cookie.js',
         'script/main.js'
-    ]).to('scripts/main.js');
+    ]).to('scripts', 'main.js');
+
+    will.concat([
+        'bower_components/bxslider-4/dist/jquery.bxslider.js',
+        'bower_components/jquery.cookie/jquery.cookie.js',
+        'script/main.js'
+    ]).to('scripts'); // default file name is all.js
 
     will.browserify(['script/admin/**/*.js']).to('admin/js');
 });

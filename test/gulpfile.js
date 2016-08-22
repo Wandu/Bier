@@ -20,4 +20,12 @@ Bier(function (will) {
 
 	// run less
 	will.browserify('browserify/index.js').to('browserify');
+
+	// run less
+	will.concat('concat/*.js').to('concat');
+
+	will.concat([
+		'concat/index1.js',
+		'concat/index2.js',
+	]).to('concat', 'common.js');
 });

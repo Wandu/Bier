@@ -112,6 +112,27 @@ class CopyRunner extends Runner
     }
 }
 
+class ConcatRunner extends Runner
+{
+    constructor(src) {
+        super(src);
+        this.watching = this.src;
+    }
+
+    to(dist, fileName) {
+        this.dist = _.get(Bier.config, 'build.dist_prefix') + dist;
+        this.fileName = fileName;
+        return this;
+    }
+
+    execute() {
+        return gulp.src(this.src)
+            .pipe(gulpif(_.get(Bier.config, 'env') === 'production', uglify().on('error', gulpUtil.log)))
+            .pipe(concat(this.fileName || 'all.js'))
+            .pipe(gulp.dest(this.dist));
+    }
+}
+
 function Bier(handler)
 {
     Bier.config = _.defaultsDeep(argv, Bier.config, {
@@ -151,6 +172,12 @@ function Bier(handler)
             var runner = new CopyRunner(src);
             all.copy = all.copy || [];
             all.copy.push(runner);
+            return runner;
+        },
+        concat: function (src) {
+            var runner = new ConcatRunner(src);
+            all.concat = all.concat || [];
+            all.concat.push(runner);
             return runner;
         },
         browserify: function (src) {
