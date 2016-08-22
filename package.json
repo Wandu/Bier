@@ -4,7 +4,7 @@
   "description": "the bier is gulp task runner framework.",
   "main": "index.js",
   "engines": {
-    "node" : ">=0.4"
+    "node": ">=5"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha test"
@@ -16,11 +16,7 @@
   "dependencies": {
     "autoprefixer": "^6.4.0",
     "babel-core": "^6.13.2",
-    "babel-loader": "^6.2.5",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.7.4",
-    "babel-plugin-transform-es3-member-expression-literals": "^6.5.0",
-    "babel-plugin-transform-es3-modules-literals": "0.0.3",
-    "babel-plugin-transform-es3-property-literals": "^6.5.0",
     "babel-preset-es2015": "^6.13.2",
     "babel-preset-react": "^6.11.1",
     "babelify": "^7.3.0",
@@ -32,17 +28,16 @@
     "gulp-less": "^3.1.0",
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^2.0.0",
-    "gulp-webpack": "^1.5.0",
-    "minimist": "^1.2.0",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
-    "babel-cli": "^6.4.5",
     "gulp-streamify": "^1.0.2",
+    "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
     "lodash": "^4",
     "merge-stream": "^1.0.0",
+    "minimist": "^1.2.0",
+    "reduce-css-calc": "^1.2.4",
     "through2": "^2.0.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
     "vinyl-transform": "^1.0.0"
   },
   "devDependencies": {
