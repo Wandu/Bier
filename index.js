@@ -1,81 +1,52 @@
-"use strict";
 
-var argv = require('minimist')(process.argv.slice(2));
+
+var _ = require('lodash');
+
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
-var streamify = require('gulp-streamify');
 var browserify = require('browserify');
 var babelify = require('babelify');
 var sass = require('gulp-sass');
 var less = require('gulp-less');
-var _ = require('lodash');
 var through = require('through2');
 var source = require('vinyl-source-stream');
 var gulpif = require('gulp-if');
 var cssnano = require('gulp-cssnano');
 var concat = require('gulp-concat');
 var buffer = require('vinyl-buffer');
-var globby = require('globby');
 var gulpUtil = require('gulp-util');
-
-var enabled = {
-    // Enable minify,uglify when `--production`
-    minifyUglify: argv.production
-};
-
-var config = {
-    dist_prefix: './',
-    source_prefix: './',
-    browserify: {
-        babelify: {
-            presets: ["es2015"],
-            plugins: [],
-        }
-    }
-};
+var childProcess = require('child_process');
+var argv = require('minimist')(process.argv.slice(2));
+delete argv._;
 
 class Runner {
 
     constructor(src) {
-
         if(!_.isArray(src)) src = [src];
-
-        this.src = _.map(src, (src)=>{
-            return Bier.config.source_prefix + src;
-        });
+        this.src = _.map(src, src => _.get(Bier.config, 'build.src_prefix') + src);
         this.dist = null;
-        this.concat_name = null;
+        this.watching = [_.get(Bier.config, 'build.src_prefix') + '**/*'];
         if (this.execute === undefined) {
             throw new TypeError("Must override method execute");
         }
     }
-
+    watch(src) {
+        if(!_.isArray(src)) src = [src];
+        this.watching = _.map(src, src => _.get(Bier.config, 'build.src_prefix') + src);
+    }
     to(dist) {
-        this.dist = Bier.config.dist_prefix + dist;
+        this.dist = _.get(Bier.config, 'build.dist_prefix') + dist;
         return this;
-    }
-
-    concat(name) {
-        this.concat_name = name;
-        return this;
-    }
-
-    _shouldConcat() {
-        return null !== this.concat_name;
-    }
-
-    _getConcatName() {
-        return (this._shouldConcat()) ? this.concat_name : 'all.js';
     }
 }
 
-class BrowserifyRunner extends Runner {
-
+class BrowserifyRunner extends Runner
+{
     constructor(src) {
         super(src);
+        this.watching = [_.get(Bier.config, 'build.src_prefix') + '**/*.js'];
     }
-
     execute() {
         return gulp.src(this.src)
             .pipe(through.obj((file, encoding, callback) => {
@@ -83,7 +54,7 @@ class BrowserifyRunner extends Runner {
                     .bundle()
                     .pipe(source(file.relative))
                     .pipe(buffer())
-                    .pipe(gulpif(enabled.minifyUglify, uglify().on('error', gulpUtil.log)))
+                    .pipe(gulpif(_.get(Bier.config, 'env') === 'production', uglify().on('error', gulpUtil.log)))
                     .pipe(gulp.dest(this.dist))
                     .on('end', callback);
             }));
@@ -95,71 +66,68 @@ class BrowserifyRunner extends Runner {
 
             //defining transforms here will avoid crashing your stream
             transform: [
-                babelify.configure({
-                    presets: config.browserify.babelify.presets,
-                    plugins: config.browserify.babelify.plugins,
-                })
+                babelify.configure(_.get(Bier.config, 'babelify', {}))
             ]
         };
     }
 }
 
-class JsRunner extends Runner {
-
+class SassRunner extends Runner
+{
     constructor(src) {
         super(src);
-    }
-
-    execute() {
-        return gulp.src(this.src)
-            .pipe(gulpif(enabled.minifyUglify, uglify().on('error', gulpUtil.log)))
-            .pipe(gulpif(this._shouldConcat(), concat(this._getConcatName())))
-            .pipe(gulp.dest(this.dist));
-    }
-}
-
-class SassRunner extends Runner {
-
-    constructor(src) {
-        super(src);
+        this.watching = [_.get(Bier.config, 'build.src_prefix') + '**/*.scss'];
     }
 
     execute() {
         return gulp.src(this.src).pipe(sass().on('error', sass.logError))
-            .pipe(gulpif(enabled.minifyUglify, cssnano()))
+            .pipe(gulpif(_.get(Bier.config, 'env') === 'production', cssnano()))
             .pipe(gulp.dest(this.dist));
     }
-
 }
 
-class LessRunner extends Runner {
-
+class LessRunner extends Runner
+{
     constructor(src) {
         super(src);
+        this.watching = [_.get(Bier.config, 'build.src_prefix') + '**/*.less'];
     }
 
     execute() {
         return gulp.src(this.src).pipe(less().on('error', sass.logError))
-            .pipe(gulpif(enabled.minifyUglify, cssnano()))
+            .pipe(gulpif(_.get(Bier.config, 'env') === 'production', cssnano()))
             .pipe(gulp.dest(this.dist));
     }
-
 }
 
-class CopyRunner extends Runner {
-
+class CopyRunner extends Runner
+{
     constructor(src) {
         super(src);
+        this.watching = this.src;
     }
 
     execute() {
         return gulp.src(this.src).pipe(gulp.dest(this.dist));
     }
-
 }
 
-var Bier = function (handler) {
+function Bier(handler)
+{
+    Bier.config = _.defaultsDeep(argv, Bier.config, {
+        env: "develop", // develop / production
+        build: {
+            src_prefix: "./",
+            dist_prefix: "./",
+        },
+        babelify: {
+            presets: ["es2015"],
+            plugins: [],
+        }
+    });
+    
     var all = {};
+    
     handler.call(null, {
         sass: function (src) {
             var runner = new SassRunner(src);
@@ -191,19 +159,13 @@ var Bier = function (handler) {
             all.browserify.push(runner);
             return runner;
         },
-        javascript: function (src) {
-            var runner = new JsRunner(src);
-            all.javascript = all.javascript || [];
-            all.javascript.push(runner);
-            return runner;
-        }
     });
     var defaultTasks = [];
     var watchTasks = [];
     _.each(all, function (runners, key) {
         gulp.task('watch:' + key, function () {
             gulp.watch(_.flatten(_.map(runners, function (runner) {
-                return runner.src;
+                return runner.watching;
             })), [key]);
         });
         gulp.task(key, function () {
@@ -215,10 +177,34 @@ var Bier = function (handler) {
         watchTasks.push('watch:' + key);
     });
 
-    gulp.task('watch', watchTasks);
-    gulp.task('default', defaultTasks);
-};
+    gulp.task('watch', function () {
+        var spawn = childProcess.spawn;
+        var p;
 
-Bier.config = Bier.config || config;
+        gulp.watch('gulpfile.js', spawnChildren);
+        spawnChildren();
+
+        function spawnChildren() {
+            // kill previous spawned childProcess
+            if (p) {
+                p.kill();
+            }
+
+            var processArgv = process.argv.slice(2);
+            processArgv[0] = 'autoload-gulpfile';
+
+            // `spawn` a child `gulp` childProcess linked to the parent `stdio`
+            p = spawn('gulp', processArgv, {stdio: 'inherit'});
+        }
+    });
+    gulp.task('default', defaultTasks);
+    gulp.task('autoload-gulpfile', watchTasks);
+}
+
+Bier.config = {};
+Bier.loadPhpConfig = function (fileName) {
+    var stream = childProcess.execSync('php -r \'echo json_encode(require("' + fileName + '"));\'');
+    return JSON.parse(stream);
+};
 
 module.exports = Bier;
