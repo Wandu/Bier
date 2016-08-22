@@ -1,4 +1,4 @@
-Festiv Bier
+Wandu Bier
 ===
 
 [![Latest Version](https://img.shields.io/npm/v/bier.svg)](http://npmjs.com/bier)

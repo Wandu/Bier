@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Festiv/Bier.git"
+    "url": "git+https://github.com/Wandu/Bier.git"
   },
   "dependencies": {
     "autoprefixer": "^6.4.0",
@@ -51,7 +51,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Festiv/Bier/issues"
+    "url": "https://github.com/Wandu/Bier/issues"
   },
-  "homepage": "https://github.com/Festiv/Bier#readme"
+  "homepage": "https://github.com/Wandu/Bier#readme"
 }
