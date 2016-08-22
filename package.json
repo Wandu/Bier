@@ -1,6 +1,6 @@
 {
   "name": "bier",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "the bier is gulp task runner framework.",
   "main": "index.js",
   "engines": {
