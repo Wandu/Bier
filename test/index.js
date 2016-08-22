@@ -11,6 +11,7 @@ function runGulpCommand(command, callback) {
 		exec('../node_modules/.bin/gulp ' + command, callback);
 	});	
 }
+
 function assertEqualFile(output, expected) {
 	assert.equal(
 		fs.readFileSync(expected).toString(),
@@ -27,8 +28,8 @@ describe("Gulp Runner", function () {
 		});
 	});
 
-	it("gulp sass --production", function (done) {
-		runGulpCommand('sass --production', function (err) {
+	it("gulp sass --env=production", function (done) {
+		runGulpCommand('sass --env=production', function (err) {
 			if (err) done(err);
 			assertEqualFile('dist/sass/index.css', 'expected/sass/index.min.css');
 			done();			
@@ -43,8 +44,8 @@ describe("Gulp Runner", function () {
 		});
 	});
 
-	it("gulp scss --production", function (done) {
-		runGulpCommand('scss --production', function (err) {
+	it("gulp scss --env=production", function (done) {
+		runGulpCommand('scss --env=production', function (err) {
 			if (err) done(err);
 			assertEqualFile('dist/scss/index.css', 'expected/scss/index.min.css');
 			done();			
@@ -55,31 +56,33 @@ describe("Gulp Runner", function () {
 		runGulpCommand('less', function (err) {
 			if (err) done(err);
 			assertEqualFile('dist/less/index.css', 'expected/less/index.css');
-			done();			
+			done();
 		});
 	});
 
-	it("gulp less --production", function (done) {
-		runGulpCommand('less --production', function (err) {
+	it("gulp less --env=production", function (done) {
+		runGulpCommand('less --env=production', function (err) {
 			if (err) done(err);
 			assertEqualFile('dist/less/index.css', 'expected/less/index.min.css');
-			done();			
+			done();
 		});
 	});
-});
 
-describe("Dependency Searcher", function () {
-	var searcher = require('../dependency-searcher');
-	it("track sass files", function (done) {
-		searcher.sass(__dirname + "/assets/sass/index.scss").then(function (deps) {
-			assert.deepEqual([
-				__dirname + '/assets/sass/components/_body.scss',
-				__dirname + '/assets/sass/components/_section.scss',
-				__dirname + '/assets/sass/components/_html.scss'
-			], deps);
+	it("gulp browserify", function (done) {
+		this.timeout(3000);
+		runGulpCommand('browserify', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/browserify/index.js', 'expected/browserify/index.js');
 			done();
-		}).catch(function (e) {
-			done(e);
+		});
+	});
+
+	it("gulp browserify --env=production", function (done) {
+		this.timeout(3000);
+		runGulpCommand('browserify --env=production', function (err) {
+			if (err) done(err);
+			assertEqualFile('dist/browserify/index.js', 'expected/browserify/index.min.js');
+			done();
 		});
 	});
 });
