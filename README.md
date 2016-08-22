@@ -1,4 +1,4 @@
-Festiv Bier
+Wandu Bier
 ===
 
 [![Latest Version](https://img.shields.io/npm/v/bier.svg)](http://npmjs.com/bier)
@@ -13,7 +13,13 @@ open `gulpfile.js`, and write this.
 ```js
 var bier = require('bier');
 
-bier.config.dist_prefix = 'public/static/';
+bier.config = {
+    env: 'develop',
+    build: {
+        src_prefix: "frontend/",
+        dist_prefix: "public/dist/",
+    }
+};
 
 bier(function (will) {
 
@@ -24,29 +30,35 @@ bier(function (will) {
 
 	will.less('less/index.less').to('less');
 
-    will.javascript([
+    will.concat([
         'bower_components/bxslider-4/dist/jquery.bxslider.js',
         'bower_components/jquery.cookie/jquery.cookie.js',
         'script/main.js'
-    ]).to('scripts').concat('main.js');
+    ]).to('scripts', 'main.js');
+
+    will.concat([
+        'bower_components/bxslider-4/dist/jquery.bxslider.js',
+        'bower_components/jquery.cookie/jquery.cookie.js',
+        'script/main.js'
+    ]).to('scripts'); // default file name is all.js
 
     will.browserify(['script/admin/**/*.js']).to('admin/js');
 });
 ```
 
-and, run command `gulp` in your sh.
+and, run command `gulp` in your sh. 
 
-If you want minified output, just run `gulp --production`.
+If you want to watch all, just run `gulp watch`.
+
+If you want minified output, just run `gulp --env=production`.
 
 ## Support Tasks
 
 - copy
-
 - sass
 - scss (alias sass)
 - less
-
-- javascript
+- concat
 - browserify : support **ecma script 2015**
 
 ## Run Test

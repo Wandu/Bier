@@ -1,8 +1,12 @@
 
 var Bier = require('../index.js'); // bier
 
-Bier.config.dist_prefix = 'dist/';
-Bier.config.source_prefix = 'assets/';
+Bier.config = {
+	build: {
+		src_prefix: "assets/",
+		dist_prefix: "dist/",
+	}
+};
 
 Bier(function (will) {
 	// run sass
@@ -13,4 +17,15 @@ Bier(function (will) {
 
 	// run less
 	will.less('less/index.less').to('less');
+
+	// run less
+	will.browserify('browserify/index.js').to('browserify');
+
+	// run less
+	will.concat('concat/*.js').to('concat');
+
+	will.concat([
+		'concat/index1.js',
+		'concat/index2.js',
+	]).to('concat', 'common.js');
 });
