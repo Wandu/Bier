@@ -225,7 +225,7 @@ function Bier(handler)
         }
     });
     gulp.task('default', defaultTasks);
-    gulp.task('autoload-gulpfile', watchTasks);
+    gulp.task('autoload-gulpfile', defaultTasks.concat(watchTasks));
 }
 
 Bier.config = {};
