@@ -1,4 +1,6 @@
 
+// for node v5.x
+"use strict";
 
 var _ = require('lodash');
 
