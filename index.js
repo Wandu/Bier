@@ -224,6 +224,10 @@ function Bier(handler)
 
             // `spawn` a child `gulp` childProcess linked to the parent `stdio`
             p = spawn('gulp', processArgv, {stdio: 'inherit'});
+            p.on('close', function () {
+                console.warn("child process gone.. reload in 3 seconds..");
+                setTimeout(spawnChildren, 3000);
+            });
         }
     });
     gulp.task('default', defaultTasks);
