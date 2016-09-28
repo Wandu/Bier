@@ -208,9 +208,13 @@ function Bier(handler)
 
     gulp.task('watch', function () {
         var spawn = childProcess.spawn;
+        var isReloadByGulpfile = false;
         var p;
 
-        gulp.watch('gulpfile.js', spawnChildren);
+        gulp.watch('gulpfile.js', function () {
+            isReloadByGulpfile = true;
+            if (p) p.kill();
+        });
         spawnChildren();
 
         function spawnChildren() {
@@ -224,9 +228,15 @@ function Bier(handler)
 
             // `spawn` a child `gulp` childProcess linked to the parent `stdio`
             p = spawn('gulp', processArgv, {stdio: 'inherit'});
-            p.on('close', function () {
-                console.warn("child process gone.. reload in 3 seconds..");
-                setTimeout(spawnChildren, 3000);
+            p.on('close', function() {
+                if (isReloadByGulpfile) {
+                    console.warn("gulpfile.js is changed!");
+                    isReloadByGulpfile = false;
+                    setTimeout(spawnChildren, 0);
+                } else {
+                    console.warn("child process gone.. reload in 3 seconds..");
+                    setTimeout(spawnChildren, 3000);
+                }
             });
         }
     });
